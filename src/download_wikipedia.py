@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup
 from keras.utils import get_file
 
 logging.basicConfig(stream=sys.stdout, encoding="utf-8", level=logging.INFO)
-log = logging.getLogger(__name__)
+log = logging.getLogger("download_wikipedia")
 log.setLevel(logging.INFO)
 
 
@@ -95,7 +95,7 @@ class WikipediaDownloader:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Download wikipedia dumps")
-    parser.add_argument("--path", default=Path().absolute() / Path("data"))
+    parser.add_argument("--path", default=Path().absolute() / Path("bz2"))
     parser.add_argument("--dump-name", default="20220901")
 
     args = parser.parse_args()
