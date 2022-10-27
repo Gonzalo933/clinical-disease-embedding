@@ -15,4 +15,4 @@ Install all dependencies with pip:
 dump_name must be one of the dumps available at: https://dumps.wikimedia.org/enwiki/
 
 Example:
-`python -m src.download_wikipedia --path /home/gonzalo/wiki_data --dump-name 20220901`
+`python -m src.download_wikipedia --path /home/gonzalo/wiki_data/bz2 --dump-name 20220901`
