@@ -104,17 +104,15 @@ def process_article(title, text, timestamp, template):
         return (title, properties, wikilinks, exlinks, timestamp, text_length)
 
 
-def find_medical_articles(input_file, partition_dir, limit=None, save=True):
+def find_medical_articles(input_file, output_dir, limit=None, save=True):
     """Find all the medical condition articles from a compressed wikipedia XML dump.
     `limit` is an optional argument to only return a set number of books.
      If save, books are saved to partition directory based on file name"""
 
     # Create file name based on partition name
-    out_path = partition_dir / ndjson_file_name(input_file)
-    import pdb
+    output_file = output_dir / ndjson_file_name(input_file)
 
-    pdb.set_trace()
-    if Path(out_path).is_file():
+    if Path(output_file).is_file():
         # Already processed
         return
     # Object for handling xml
@@ -139,12 +137,12 @@ def find_medical_articles(input_file, partition_dir, limit=None, save=True):
 
     if save:
         # Open the file
-        with open(out_path, "w") as fout:
+        with open(output_file, "w") as fout:
             # Write as json
             for disease in handler._diseases:
                 fout.write(json.dumps(disease) + "\n")
 
-        log.info(f"{len(os.listdir(partition_dir))} files processed.")
+        log.info("%s files processed.", len(os.listdir(output_dir)))
 
     # Memory management
     del handler
@@ -159,12 +157,12 @@ def ndjson_file_name(bz2_name):
     Args:
         bz2_name (Path): input file path
     """
-    return Path(f"{bz2_name.stem}.ndjson")
+    return Path(f"{Path(bz2_name).stem}.ndjson")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Download wikipedia dumps")
-    parser.add_argument("--input-path", default=Path().absolute() / Path("data") / Path("bz2"))
+    parser.add_argument("--download-path", default=Path().absolute() / Path("data") / Path("bz2"))
     parser.add_argument("--output-path", default=Path().absolute() / Path("data") / Path("ndjson"))
     parser.add_argument("--n-cpus", default=6)
     args = parser.parse_args()
@@ -191,7 +189,7 @@ if __name__ == "__main__":
     # Run bz2_partitions in parallel
     for x in tqdm.tqdm(
         pool.imap_unordered(
-            partial(find_medical_articles, partition_dir=output_path), bz2_partitions
+            partial(find_medical_articles, output_path=output_path), bz2_partitions
         ),
         total=len(bz2_partitions),
     ):

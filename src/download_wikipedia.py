@@ -25,7 +25,7 @@ class WikipediaDownloader:
     def __init__(self, download_dir, dump_name):
         self.download_dir = download_dir if isinstance(download_dir, Path) else Path(download_dir)
         Path(self.download_dir).mkdir(parents=True, exist_ok=True)
-        self.dump_name = dump_name if args.dump_name[-1] == "/" else args.dump_name + "/"
+        self.dump_name = dump_name if dump_name[-1] == "/" else dump_name + "/"
         self.dump_url = self.base_url + self.dump_name
         log.info("dump_name: %s", dump_name)
 
@@ -61,6 +61,32 @@ class WikipediaDownloader:
             )
         return files_to_download
 
+    def download_wikipedia_file(self, f):
+        """Downloads a single file."""
+        path = self.download_dir / Path(f)
+        file_url = f"{self.dump_url}/{f}"
+        log.info("Checking %s", file_url)
+        log.info("Output path %s", path)
+        # Check to see if the file is already downloaded
+        if not path.is_file():
+            log.info("Downloading file %s", file_url)
+            output_file_path = get_file(f, file_url, cache_subdir=self.download_dir)
+            # Find the file size in MB
+            file_size = os.stat(path).st_size / 1e6
+            # Find the number of articles
+            file_articles = int(f.split("p")[-1].split(".")[-2]) - int(f.split("p")[-2])
+            file_info = (f, file_size, file_articles)
+        else:
+            # If the file is already downloaded find some information
+            output_file_path = path
+            # Find the file size in MB
+            file_size = os.stat(path).st_size / 1e6
+
+            # Find the number of articles
+            file_number = int(f.split("p")[-1].split(".")[-2]) - int(f.split("p")[-2])
+            file_info = (f.split("-")[-1], file_size, file_number)
+        return Path(output_file_path), file_info
+
     def download_wikipedia_backup(self):
         files_to_download = self.get_dump_file_names()
         data_paths = []
@@ -68,30 +94,12 @@ class WikipediaDownloader:
 
         # Iterate through each file
         for f in tqdm.tqdm(files_to_download):
-            path = self.download_dir / Path(f)
-            file_url = f"{self.dump_url}/{f}"
-            log.info("Checking %s", file_url)
-            log.info("Output path %s", path)
-            # Check to see if the file is already downloaded
-            if not os.path.exists(download_dir + f):
-                log.info("Downloading file %s", file_url)
-                data_paths.append(get_file(f, file_url, cache_subdir=download_dir))
-                # Find the file size in MB
-                file_size = os.stat(path).st_size / 1e6
-                # Find the number of articles
-                file_articles = int(f.split("p")[-1].split(".")[-2]) - int(f.split("p")[-2])
-                file_info.append((f, file_size, file_articles))
-            else:
-                # If the file is already downloaded find some information
-                data_paths.append(path)
-                # Find the file size in MB
-                file_size = os.stat(path).st_size / 1e6
-
-                # Find the number of articles
-                file_number = int(f.split("p")[-1].split(".")[-2]) - int(f.split("p")[-2])
-                file_info.append((f.split("-")[-1], file_size, file_number))
+            path, info = self.download_wikipedia_file(f)
+            data_paths.append(path)
+            file_info.append(info)
             log.info("Total Wikipedia size: %dMB", sum([i[1] for i in file_info]))
             log.info("Total Articles: %d", sum([i[2] for i in file_info]))
+        return data_paths
 
 
 if __name__ == "__main__":
