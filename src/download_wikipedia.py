@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 import requests
+import tqdm
 
 # Parsing HTML
 from bs4 import BeautifulSoup
@@ -66,7 +67,7 @@ class WikipediaDownloader:
         file_info = []
 
         # Iterate through each file
-        for f in files_to_download:
+        for f in tqdm.tqdm(files_to_download):
             path = self.download_dir / Path(f)
             file_url = f"{self.dump_url}/{f}"
             log.info("Checking %s", file_url)
