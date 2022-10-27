@@ -89,7 +89,7 @@ class WikipediaDownloader:
                 # Find the number of articles
                 file_number = int(f.split("p")[-1].split(".")[-2]) - int(f.split("p")[-2])
                 file_info.append((f.split("-")[-1], file_size, file_number))
-            log.info("Total Wikipedia size: %d", sum([i[1] for i in file_info]))
+            log.info("Total Wikipedia size: %dMB", sum([i[1] for i in file_info]))
             log.info("Total Articles: %d", sum([i[2] for i in file_info]))
 
 
