@@ -33,7 +33,7 @@ log.setLevel(logging.INFO)
 def download_and_process(f, output_path, remove_bz2_after_download=True):
     # Check if ndjson exists
     if (output_path / ndjson_file_name(f)).is_file():
-        log.info("%s Exists!", output_path / ndjson_file_name(f))
+        log.info("Skip %s", output_path / ndjson_file_name(f))
         return
     downloaded_path, info = wikipedia_downloader.download_wikipedia_file(f)
     log.info("Downloaded %s", downloaded_path)
