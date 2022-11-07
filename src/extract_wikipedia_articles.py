@@ -133,7 +133,7 @@ def find_medical_articles(input_file, output_dir, limit=None, save=True):
 
         # Optional limit
         if limit is not None and len(handler._diseases) >= limit:
-            return handler._diseases
+            break
 
     if save:
         # Open the file
@@ -141,8 +141,8 @@ def find_medical_articles(input_file, output_dir, limit=None, save=True):
             # Write as json
             for disease in handler._diseases:
                 fout.write(json.dumps(disease) + "\n")
-
         log.info("%s files processed.", len(os.listdir(output_dir)))
+    log.info("%s has %d", input_file, len(handler._diseases))
 
     # Memory management
     del handler
