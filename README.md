@@ -24,7 +24,7 @@ Example:
 I followed the methodology explained in this article:
 https://towardsdatascience.com/neural-network-embeddings-explained-4d028e6f0526
 
-I downloaded all wikipedia articles for clinical conditions. That is, articles that contain the infobox template for "medical condition". As an example, this is the infobox for (Legionnaires' disease)[https://en.wikipedia.org/wiki/Legionnaires%27_disease].
+I downloaded all wikipedia articles for clinical conditions. That is, articles that contain the infobox template for "medical condition". As an example, this is the infobox for [Legionnaires' disease](https://en.wikipedia.org/wiki/Legionnaires%27_disease).
 
 ![Medical condition example](data/img/legionnaires_disease.png "Medical condition example")
 
@@ -87,5 +87,5 @@ Article: Inflammation                                    Similarity: 0.8
 
 ```
 
-The full embedding can be explored here:s
+The full embedding can be explored here:
 https://projector.tensorflow.org/?config=https://downloads.gonzalohernandezmunoz.com/clinical-disease-embedding/config.json
