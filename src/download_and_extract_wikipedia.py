@@ -25,15 +25,28 @@ import tqdm
 from .download_wikipedia import WikipediaDownloader
 from .extract_wikipedia_articles import find_medical_articles, ndjson_file_name
 
-logging.basicConfig(stream=sys.stdout, encoding="utf-8", level=logging.INFO)
+logging.basicConfig(
+    stream=sys.stdout,
+    encoding="utf-8",
+    level=logging.INFO,
+    force=True,
+    format="%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
 log = logging.getLogger("download_and_extract")
 log.setLevel(logging.INFO)
 
 
 def download_and_process(f, output_path, remove_bz2_after_download=True):
     # Check if ndjson exists
+    log.info("Check if %s exists", output_path / ndjson_file_name(f))
     if (output_path / ndjson_file_name(f)).is_file():
         log.info("Skip %s", output_path / ndjson_file_name(f))
+        return
+    # Sometimes the name have a different format
+    alternative_name = Path(str(ndjson_file_name(f)).replace("-multistream", ""))
+    if (output_path / alternative_name).is_file():
+        log.info("ALternative name found. Skip %s", output_path / alternative_name)
         return
     downloaded_path, info = wikipedia_downloader.download_wikipedia_file(f)
     log.info("Downloaded %s", downloaded_path)
